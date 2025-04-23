@@ -1,0 +1,28 @@
+Indicateurs utilisés dans CryptoBot
+
+✅ Fear & Greed Index (F&G)
+Indice entre 0 et 100 qui reflète le sentiment global du marché.
+- 0 → Extreme Fear (peur extrême, panique des investisseurs)
+- 100 → Extreme Greed (avidité extrême, euphorie des investisseurs)
+Pourquoi c’est utile ?
+Le marché crypto est très émotionnel. Ce score permet de comprendre si le marché est en phase de peur (potentiel achat) ou de cupidité (potentiel vente).
+
+✅ SMA (Simple Moving Average)
+Moyenne glissante des prix sur une période donnée (exemple : 7 jours).
+Elle permet de lisser les variations de prix et d'identifier les tendances de fond.
+
+✅ Volume d’échange moyen (sur 7 jours)
+Volume = quantité échangée de la crypto (exemple : combien de BTC échangés aujourd’hui).
+Moyenne des volumes sur 7 jours = ça lisse les pics et les creux.
+
+✅ Change % day-to-day
+C’est le pourcentage de variation entre hier et aujourd’hui :
+
+Exemple : hier 90 000, aujourd’hui 91 000 :
+
+91 000 − 90 000 / 90 000 × 100 = +1.11%
+
+Très utile pour voir si la crypto est stable ou en pleine explosion / dégringolade.
+
+✅ RSI (Relative Strength Index)
+Indicateur de momentum mesurant la vitesse et le changement des mouvements de prix.

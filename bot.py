@@ -1,3 +1,4 @@
+import shutil
 import requests
 import pandas as pd
 import numpy as np
@@ -5,9 +6,55 @@ import time
 import os
 from dotenv import load_dotenv
 import csv  
+import psycopg2
+import logging
+
+# logging.basicConfig(
+#     filename='bot.log',
+#     level=logging.INFO,
+#     format='%(asctime)s - %(levelname)s - %(message)s'
+# )
+
 
 # Charger les variables du fichier .env
-# load_dotenv()
+load_dotenv()
+
+
+# Définition des dossiers
+LOGS_DIR = "logs"
+CSV_DIR = "csv"
+LOGS_ARCHIVE_DIR = os.path.join(LOGS_DIR, "archives")
+CSV_ARCHIVE_DIR = os.path.join(CSV_DIR, "archives")
+
+# Création des dossiers si non existants
+for folder in [LOGS_DIR, CSV_DIR, LOGS_ARCHIVE_DIR, CSV_ARCHIVE_DIR]:
+    os.makedirs(folder, exist_ok=True)
+
+# Configuration du logging
+log_filename = os.path.join(LOGS_DIR, "bot.log")
+logging.basicConfig(
+    filename=log_filename,
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+print(f"📄 Log enregistré dans : {log_filename}")
+
+# Fonction pour enregistrer un CSV dans le bon dossier
+def save_csv(df, filename):
+    file_path = os.path.join(CSV_DIR, filename)
+    df.to_csv(file_path, index=False, sep=";", quoting=csv.QUOTE_NONNUMERIC)
+    print(f"📄 Fichier enregistré : {file_path}")
+
+# Fonction d'archivage des fichiers (déplace les anciens fichiers)
+def archive_old_files(source_folder, archive_folder, days=7):
+    now = time.time()
+    for file_name in os.listdir(source_folder):
+        file_path = os.path.join(source_folder, file_name)
+        if os.path.isfile(file_path):
+            if now - os.path.getmtime(file_path) > days * 86400:  # +7 jours
+                archive_path = os.path.join(archive_folder, f"{file_name}_{time.strftime('%Y%m%d-%H%M%S')}")
+                shutil.move(file_path, archive_path)
+                print(f"📦 {file_name} archivé dans {archive_folder}")
 
 # Récupérer la clé API depuis le .env
 # COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY")
@@ -15,6 +62,9 @@ import csv
 
 # Définir l'URL de base (Toujours API gratuite)
 COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3"
+
+print("Connexion à la base :", os.getenv("DB_NAME"), os.getenv("DB_USER"))
+
 
 # Fonction pour récupérer les prix historiques depuis CoinGecko
 def get_crypto_prices(crypto_id="bitcoin", currency="usd", days=30, interval="daily"):
@@ -86,7 +136,8 @@ for crypto in cryptos.keys():
         if df.empty:
             print(f" Aucune donnée reçue pour {crypto} depuis CoinGecko !")
         else:
-            df.to_csv(f"{crypto}_prices_rsi.csv", index=False, sep=";")
+            # df.to_csv(f"{crypto}_prices_rsi.csv", index=False, sep=";")
+            save_csv(df, f"{crypto}_prices_rsi.csv")
             print(f"\n Prix récupérés pour {crypto.capitalize()}")
     except Exception as e:
         print(f" Erreur lors de la récupération des données pour {crypto}: {e}")
@@ -127,7 +178,9 @@ df_comparison = pd.DataFrame(price_data, columns=["Crypto", "CoinGecko Price", "
 # Sauvegarder les résultats dans un CSV
 timestamp = time.strftime("%Y%m%d-%H%M%S")
 filename = f"crypto_price_comparison_{timestamp}.csv"
-df_comparison.to_csv(filename, index=False, sep=";")
+# df_comparison.to_csv(filename, index=False, sep=";")
+save_csv(df_comparison, filename)
+
 
 print(f"\n Comparaison des prix enregistrée dans '{filename}' ")
 
@@ -233,7 +286,9 @@ def calculate_fibonacci_levels(df):
 # calcul du RSI et mise à jour des fichiers CSV
 for coin in cryptos.keys():
     try:
-        df = pd.read_csv(f"{coin}_prices_rsi.csv", sep=";")  # Charger les prix existants
+        # df = pd.read_csv(f"{coin}_prices_rsi.csv", sep=";")  # Charger les prix existants
+        csv_path = os.path.join(CSV_DIR, f"{coin}_prices_rsi.csv")
+        df = pd.read_csv(csv_path, sep=";")
         df = calculate_rsi(df)  # RSI
         df = calculate_stochastic_rsi(df)  # Stochastic RSI
         df = calculate_bollinger_bands(df)  # Bandes de Bollinger
@@ -255,7 +310,9 @@ for coin in cryptos.keys():
 
         #  Enregistrer le fichier CSV mis à jour avec RSI
         # df.to_csv(f"{coin}_prices_rsi.csv", index=False, sep=";")
-        df.to_csv(f"{coin}_prices_rsi.csv", index=False, sep=";", quoting=csv.QUOTE_NONNUMERIC)
+        # df.to_csv(f"{coin}_prices_rsi.csv", index=False, sep=";", quoting=csv.QUOTE_NONNUMERIC)
+        save_csv(df, f"{coin}_prices_rsi.csv")
+
 
         print(f" {coin.capitalize()}  RSI ajouté et enregistré dans {coin}_prices_rsi.csv")
 
@@ -263,3 +320,95 @@ for coin in cryptos.keys():
         print(f" Erreur lors du calcul du RSI pour {coin}: {e}")
 
 print("\n Calcul du RSI terminé et fichiers mis à jour.")
+
+
+
+
+# Connexion à PostgreSQL
+conn = psycopg2.connect(
+    dbname=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT")
+)
+cursor = conn.cursor()
+
+# Fonction pour insérer les données
+def insert_data(df, crypto_name):
+    try:
+        for _, row in df.iterrows():
+            cursor.execute("""
+                INSERT INTO crypto_prices 
+                (crypto, timestamp, price, volume, RSI, MACD, MACD_Signal, MACD_Histogram, SMA, Upper_Band, Lower_Band, ADX, Stoch_RSI, Fibo_23, Fibo_38, Fibo_50, Fibo_61, Fibo_78)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (crypto, timestamp) DO NOTHING
+            """, (
+                crypto_name, 
+                row["timestamp"], 
+                row["price"], 
+                row["volume"], 
+                row.get("RSI", None), 
+                row.get("MACD", None), 
+                row.get("MACD_Signal", None), 
+                row.get("MACD_Histogram", None), 
+                row.get("SMA", None), 
+                row.get("Upper_Band", None), 
+                row.get("Lower_Band", None), 
+                row.get("ADX", None), 
+                row.get("Stoch_RSI", None), 
+                row.get("Fibo_23", None), 
+                row.get("Fibo_38", None), 
+                row.get("Fibo_50", None), 
+                row.get("Fibo_61", None), 
+                row.get("Fibo_78", None)
+            ))
+
+        conn.commit()
+        print(f" Données insérées pour {crypto_name}")
+        logging.info(f"Données insérées pour {crypto_name}")
+
+    except Exception as e:
+        print(f" Erreur lors de l'insertion pour {crypto_name} : {e}")
+        logging.error(f"Erreur lors de l'insertion pour {crypto_name} : {e}")
+
+
+
+def insert_fear_greed(value, classification):
+    try:
+        today = pd.to_datetime("today").date()
+        cursor.execute("""
+            INSERT INTO fear_greed_index (date, value, classification)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (date) DO NOTHING
+        """, (today, value, classification))
+        conn.commit()
+        print(f" Fear & Greed Index enregistré ({value} - {classification})")
+        logging.info(f"Fear & Greed Index enregistré ({value} - {classification})")
+    except Exception as e:
+        print(f" Erreur Fear & Greed Index : {e}")
+        logging.error(f"Erreur Fear & Greed Index : {e}")
+
+
+    
+
+#insertion des données dans la base de données
+df_btc = pd.read_csv(os.path.join(CSV_DIR, "bitcoin_prices_rsi.csv"), sep=";")
+insert_data(df_btc, "bitcoin")
+
+df_eth = pd.read_csv(os.path.join(CSV_DIR, "ethereum_prices_rsi.csv"), sep=";")
+insert_data(df_eth, "ethereum")
+
+df_bnb = pd.read_csv(os.path.join(CSV_DIR, "binancecoin_prices_rsi.csv"), sep=";")
+insert_data(df_bnb, "binancecoin")
+
+fng_value, fng_classification = get_fear_greed_index()
+insert_fear_greed(fng_value, fng_classification)
+
+#  Archiver les anciens fichiers
+archive_old_files(CSV_DIR, CSV_ARCHIVE_DIR)
+archive_old_files(LOGS_DIR, LOGS_ARCHIVE_DIR)
+
+# Fermeture de la connexion
+cursor.close()
+conn.close()

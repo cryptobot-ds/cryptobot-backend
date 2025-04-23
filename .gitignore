@@ -1,3 +1,10 @@
+# Fichier spécifique à ignorer
+doc.txt
+*.log
+*.csv
+.env
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,8 +1,0 @@
-install pour les variable : pip install python-dotenv
-RSI : Entre 0 et 100, au-dessus de 70 = surachat, en dessous de 30 = survente.
-Bandes de Bollinger : Comparer la position du prix par rapport aux bandes.
-Moyennes Mobiles : Vérifier si les moyennes suivent bien le prix.
-MACD : Étudier le croisement de la ligne MACD et du signal.
-
-
-lance le script avec python bot.py
