@@ -43,7 +43,7 @@ for crypto in cryptos:
         continue
 
     df = pd.read_csv(file_path, sep=";", quotechar='"')
-    df = df.dropna()
+    # df = df.dropna()
 
     # Calcul des nouvelles features :
     df["Volume_Avg_7d"] = df["volume"].rolling(window=7).mean()
@@ -51,7 +51,7 @@ for crypto in cryptos:
     df["SMA_7"] = df["price"].rolling(window=7).mean()
     df["Fear_Greed_7d"] = avg_fng_7d  # Valeur réelle depuis la BDD
 
-    df = df.dropna()
+    df = df.dropna(subset=["Volume_Avg_7d", "Change_Percent", "SMA_7"])
 
     output_path = f"csv/{crypto}_features.csv"
     df.to_csv(output_path, index=False, sep=";")
