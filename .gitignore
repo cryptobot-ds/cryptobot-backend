@@ -3,6 +3,7 @@ doc.txt
 *.log
 *.csv
 .env
+tempo.py
 
 
 # Byte-compiled / optimized / DLL files

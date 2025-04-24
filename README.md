@@ -1,6 +1,6 @@
 # cryptobot-backend
 
-## Getting started - Unix (MacOS/Linux)
+## Démarrage - Unix (MacOS/Linux)
 
 ### Installation de PostgreSQL et création du `.venv`
 
@@ -66,7 +66,7 @@ psql -U cryptobot_user -d cryptobot_db -W
 # mdp
 ```
 
-2. Création de la table :
+2. Création des tables :
 
 ```postgres
 CREATE TABLE IF NOT EXISTS crypto_prices (
@@ -103,6 +103,14 @@ CREATE TABLE IF NOT EXISTS crypto_prices (
 );
 ```
 
+```postgres
+CREATE TABLE fear_greed_index (
+    date DATE PRIMARY KEY,
+    value INTEGER NOT NULL,
+    classification TEXT NOT NULL
+);
+```
+
 Pour se déconnecter de la base de données :
 
 ```postgres
@@ -120,13 +128,12 @@ psql -U cryptobot_user -d cryptobot_db -W
 2. Copie des données
 
 ```postgres
-\copy crypto_prices FROM '/chemin/vers/export_crypto_prices.csv' DELIMITER ';' CSV HEADER;
-
--- ou si l'export contient moins de colonnes que l'actuel schema de db
-
-\copy crypto_prices(id, crypto, timestamp, price, volume, rsi, macd, sma, macd_signal, macd_histogram, upper_band, lower_band, adx, stoch_rsi, fibo_23, fibo_38, fibo_50, fibo_61, fibo_78)
+\copy crypto_prices(crypto, timestamp, price, volume, rsi, macd, sma, macd_signal, macd_histogram, upper_band, lower_band, adx, stoch_rsi, fibo_23, fibo_38, fibo_50, fibo_61, fibo_78)
 FROM 'export_crypto_prices.csv' DELIMITER ';' CSV HEADER;
 ```
+
+> [!warning]
+> Bien préciser les colonnes **SANS** la colonne `id` : il faut laisser Postgres incrémenter les ids automatiquement sinon les `INSERT` dans le code Python provoquent une erreur.
 
 ## Lancement des scripts
 
@@ -139,3 +146,5 @@ DB_PASSWORD=
 DB_HOST=localhost # car local
 DB_PORT=5432 # port par défaut en local
 ```
+
+Exécuter les scripts.
