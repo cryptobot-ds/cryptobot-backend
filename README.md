@@ -1,14 +1,12 @@
-# Getting started
+# cryptobot-backend
 
-## Windows
+## Getting started - Unix (MacOS/Linux)
 
-TODO. (besoin ?)
-
-## Unix (MacOS/Linux)
+### Installation de PostgreSQL et création du `.venv`
 
 **S'assurer que PostgreSQL est installé sur la machine :**
 
-- MacOS avec [Homebrew](https://brew.sh/) : `brew install postgresql@17`
+- MacOS avec [Homebrew](https://brew.sh/) : `brew install postgresql@17 && brew services start postgresql@17`
 - Sur Ubuntu et dérivés : `sudo apt update && sudo apt install -y postgresql postgresql-contrib libpq-dev`
    
 **Installer les dépendances :**
@@ -44,6 +42,10 @@ psql --version
 
 ```shell
 psql -U postgres
+
+# Sur Mac
+createdb # because Macs don't create username databases after installing PostgreSQL
+psql
 ```
 
 3. Créer un utilisateur et une base de données :
@@ -118,5 +120,22 @@ psql -U cryptobot_user -d cryptobot_db -W
 2. Copie des données
 
 ```postgres
-\copy crypto_prices FROM '/chemin/vers/export_crypto_prices.txt' DELIMITER ';' CSV HEADER;
+\copy crypto_prices FROM '/chemin/vers/export_crypto_prices.csv' DELIMITER ';' CSV HEADER;
+
+-- ou si l'export contient moins de colonnes que l'actuel schema de db
+
+\copy crypto_prices(id, crypto, timestamp, price, volume, rsi, macd, sma, macd_signal, macd_histogram, upper_band, lower_band, adx, stoch_rsi, fibo_23, fibo_38, fibo_50, fibo_61, fibo_78)
+FROM 'export_crypto_prices.csv' DELIMITER ';' CSV HEADER;
+```
+
+## Lancement des scripts
+
+Créer un fichier `.env` qui sera importé par `bot.py` sous le format :
+
+```
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
+DB_HOST=localhost # car local
+DB_PORT=5432 # port par défaut en local
 ```
