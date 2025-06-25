@@ -20,11 +20,20 @@ def get_connection():
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 @st.cache_data
-def load_prediction():
+def load_prediction(crypto_name):
     try:
-        csv_path = os.path.join(BASE_DIR, "csv", "prediction_btc.csv")
-        df_pred = pd.read_csv(csv_path, sep=";")
-        return df_pred.iloc[-1]  # Dernière ligne = plus récente
+        conn = get_connection()
+        query = """
+            SELECT * FROM predictions
+            WHERE crypto = %s
+            ORDER BY timestamp DESC
+            LIMIT 1;
+        """
+        df = pd.read_sql_query(query, conn, params=(crypto_name,))
+        conn.close()
+        if not df.empty:
+            return df.iloc[0]
+        return None
     except Exception as e:
         st.warning(f"⚠️ Impossible de charger la prédiction : {e}")
         return None
@@ -68,26 +77,13 @@ st.title("📊 Dashboard CryptoBot")
 # Sélection de la crypto
 crypto = st.selectbox("Sélectionne une crypto :", ["bitcoin", "ethereum", "binancecoin"])
 
-@st.cache_data
-def load_prediction(crypto_code):
-    try:
-        csv_path = os.path.join(BASE_DIR, "csv", f"prediction_{crypto_code}.csv")
-        df_pred = pd.read_csv(csv_path, sep=";")
-        return df_pred.iloc[-1]  # Dernière ligne = plus récente
-    except Exception as e:
-        st.warning(f"⚠️ Impossible de charger la prédiction pour {crypto_code} : {e}")
-        return None
-
-
-crypto_code_map = {"bitcoin": "btc", "ethereum": "eth", "binancecoin": "bnb"}
-crypto_code = crypto_code_map[crypto]
+prediction = load_prediction(crypto)
 
 st.subheader(f" Prédiction du prix pour demain ({crypto.capitalize()})")
 
-prediction = load_prediction(crypto_code)
 if prediction is not None:
     st.metric(label=f"Prix actuel ({crypto.upper()})", value=f"${prediction['last_price']:,.2f}")
-    st.metric(label=f"Prédiction pour demain ({crypto.upper()})", value=f"${prediction['predicted_price_tomorrow']:,.2f}")
+    st.metric(label=f"Prédiction pour demain ({crypto.upper()})", value=f"${prediction['predicted_price']:,.2f}")
     st.caption(f"Erreur moyenne du modèle (MAE) : ±${prediction['model_mae']:,.2f}")
     # Affichage de la décision (BUY, SELL, HOLD)
     decision = prediction['decision']

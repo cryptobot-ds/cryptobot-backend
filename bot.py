@@ -37,13 +37,13 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
-print(f"📄 Log enregistré dans : {log_filename}")
+print(f" Log enregistré dans : {log_filename}")
 
 # Fonction pour enregistrer un CSV dans le bon dossier
 def save_csv(df, filename):
     file_path = os.path.join(CSV_DIR, filename)
     df.to_csv(file_path, index=False, sep=";", quoting=csv.QUOTE_NONNUMERIC)
-    print(f"📄 Fichier enregistré : {file_path}")
+    print(f" Fichier enregistré : {file_path}")
 
 # Fonction d'archivage des fichiers (déplace les anciens fichiers)
 def archive_old_files(source_folder, archive_folder, days=7):
@@ -54,7 +54,7 @@ def archive_old_files(source_folder, archive_folder, days=7):
             if now - os.path.getmtime(file_path) > days * 86400:  # +7 jours
                 archive_path = os.path.join(archive_folder, f"{file_name}_{time.strftime('%Y%m%d-%H%M%S')}")
                 shutil.move(file_path, archive_path)
-                print(f"📦 {file_name} archivé dans {archive_folder}")
+                print(f" {file_name} archivé dans {archive_folder}")
 
 # Récupérer la clé API depuis le .env
 # COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY")

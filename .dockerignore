@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+.env
+logs/
+csv/
+archive_and_clean.py
+collect_data.bat
+predict_price.bat
