@@ -1,0 +1,19 @@
+name: Lancer le script de déploiement
+
+on:
+  push:
+    branches:
+      - main
+
+jobs: 
+    run-cryptobot:
+        runs-on : self-hosted
+        steps: 
+        - name: Vérifier le code
+          uses: actions/checkout@v2
+        
+        - name: installer les dépendances
+          run: pip3 install -r requirements.txt --user
+
+        - name: Lancer le script
+          run: python3 bot.py
