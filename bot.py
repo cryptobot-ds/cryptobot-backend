@@ -17,7 +17,10 @@ import logging
 
 
 # Charger les variables du fichier .env
-load_dotenv()
+# load_dotenv()
+# Charger les variables d'environnement depuis le fichier .env a la racine du serveur
+load_dotenv(dotenv_path=os.path.expanduser("~/.cryptobot_env"))
+print("Connexion à la base :", os.getenv("DB_NAME"), os.getenv("DB_USER"))
 
 
 # Définition des dossiers
