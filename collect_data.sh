@@ -22,6 +22,9 @@ source .venv/bin/activate || {
     exit 1
 }
 
+# Installation des dépendances
+pip3 install -r requirements.txt --user
+
 # Étape 1 - Lancer le bot
 python bot.py
 if [ $? -ne 0 ]; then
