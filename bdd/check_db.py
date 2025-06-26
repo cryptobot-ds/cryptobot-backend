@@ -4,7 +4,9 @@ from dotenv import load_dotenv
 import logging
 
 # Charger les variables .env
-load_dotenv()
+# load_dotenv()
+load_dotenv(dotenv_path=os.path.expanduser("~/.cryptobot_env"))
+print("Connexion à la base :", os.getenv("DB_NAME"), os.getenv("DB_USER"))
 
 # Configuration des logs
 os.makedirs('logs', exist_ok=True)
