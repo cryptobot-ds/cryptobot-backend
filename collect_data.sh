@@ -7,7 +7,16 @@ cd "$SCRIPT_DIR" || {
     exit 1
 }
 
-# Activer l'environnement virtuel
+# Créer l’environnement virtuel s’il n’existe pas
+if [ ! -d ".venv" ]; then
+    echo "🔧 Environnement virtuel non trouvé, création en cours..."
+    python3 -m venv .venv || {
+        echo "❌ Erreur : Impossible de créer l’environnement virtuel."
+        exit 1
+    }
+fi
+
+# Activer l’environnement virtuel
 source .venv/bin/activate || {
     echo "❌ Erreur : Impossible d'activer l'environnement virtuel."
     exit 1
