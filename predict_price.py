@@ -17,6 +17,9 @@ from sklearn.metrics import mean_absolute_error
 # Charger variables d’environnement
 load_dotenv()
 
+# faire un print de l'heure now
+print("Heure actuelle :", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
 # Logging
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(BASE_DIR, 'logs', 'bot.log')
@@ -162,3 +165,4 @@ def insert_prediction(crypto, pred, last, decision, mae, version="v2"):
 if __name__ == "__main__":
     for n, c in cryptos.items():
         predict_price(n, c)
+
