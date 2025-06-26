@@ -4,7 +4,10 @@ import os
 from dotenv import load_dotenv
 
 # Charger les variables .env
-load_dotenv()
+# load_dotenv()
+# Charger les variables depuis ~/.cryptobot_env
+load_dotenv(dotenv_path=os.path.expanduser("~/.cryptobot_env"))
+print("Connexion à la base :", os.getenv("DB_NAME"), os.getenv("DB_USER"))
 
 def get_connection():
     return psycopg2.connect(
@@ -14,6 +17,8 @@ def get_connection():
         host=os.getenv("DB_HOST"),
         port=os.getenv("DB_PORT")
     )
+
+
 
 cryptos = ["bitcoin", "ethereum", "binancecoin"]
 
