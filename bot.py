@@ -22,6 +22,10 @@ import logging
 load_dotenv(dotenv_path=os.path.expanduser("~/.cryptobot_env"))
 print("Connexion à la base :", os.getenv("DB_NAME"), os.getenv("DB_USER"))
 
+from datetime import datetime  
+
+print("Début du script :", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
 
 # Définition des dossiers
 LOGS_DIR = "logs"
