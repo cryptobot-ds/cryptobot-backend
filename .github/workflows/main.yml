@@ -17,3 +17,6 @@ jobs:
 
         - name: Lancer le script
           run: python3 bot.py
+
+        - name: Lancer le script de feature
+          run: python3 generate_features.py
