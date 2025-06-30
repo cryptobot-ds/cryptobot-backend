@@ -59,6 +59,16 @@ def select_features(df, features, thresh=0.9):
     drop = [col for col in upper.columns if any(upper[col] > thresh)]
     return [f for f in features if f not in drop]
 
+print(df.info())
+# Je n'ai pas besoin de choisir que les colonnes numériques car dans mon dataframe data il ny a que des colonnes numériques
+corr_data = data.corr(method='pearson',min_periods=1,numeric_only=True)
+
+# Je veux voir les corrélations exactes entre la colonne "mpg" et toutes les autres colonnes
+
+plt.figure(figsize=(11,11))
+sns.heatmap(corr_data ,cmap='coolwarm',annot=True,linewidth=0.9,fmt='.1f')
+plt.show()
+
 def decide_action(last, pred, th=0.01):
     d = (pred - last) / last
     return "BUY" if d > th else "SELL" if d < -th else "HOLD"
@@ -85,6 +95,7 @@ def predict_price(name, code):
         feats = REQUIRED + [c for c in OPTIONAL if c in df.columns]
         feats = select_features(df, feats, thresh=0.9)
         logging.info(f"{name} features retenues: {feats}")
+
 
         # 4) on prépare target et X/Y
         df["target"] = df["price"].shift(-1)
