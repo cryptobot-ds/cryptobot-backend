@@ -6,17 +6,23 @@ on:
       - main
 
 jobs: 
-    run-cryptobot:
-        runs-on : self-hosted
-        steps: 
-        - name: Vérifier le code
-          uses: actions/checkout@v2
-        
-        - name: installer les dépendances
-          run: pip3 install -r requirements.txt --user
+  run-cryptobot:
+    runs-on: self-hosted
 
-        - name: Lancer le script
-          run: python3 bot.py
+    steps: 
+      - name: Checkout du code
+        uses: actions/checkout@v4
 
-        - name: Lancer le script de feature
-          run: python3 generate_features.py
+      - name: Créer l'environnement virtuel et installer les dépendances
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -r requirements.txt
+
+      - name: Lancer le script principal
+        run: |
+          .venv/bin/python bot.py
+
+      - name: Lancer le script de features
+        run: |
+          .venv/bin/python generate_features.py
