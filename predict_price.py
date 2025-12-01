@@ -15,6 +15,7 @@ from sklearn.model_selection import train_test_split, TimeSeriesSplit, cross_val
 from sklearn.metrics import mean_absolute_error
 
 # Charger variables d’environnement
+
 load_dotenv()
 
 # Logging

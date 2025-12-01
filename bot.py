@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import csv  
 import psycopg2
 import logging
+from pathlib import Path
 
 # logging.basicConfig(
 #     filename='bot.log',
@@ -19,7 +20,11 @@ import logging
 # Charger les variables du fichier .env
 # load_dotenv()
 # Charger les variables d'environnement depuis le fichier .env a la racine du serveur
-load_dotenv(dotenv_path=os.path.expanduser("~/.cryptobot_env"))
+# load_dotenv(dotenv_path=os.path.expanduser("~/.cryptobot_env"))
+
+
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
 print("Connexion à la base :", os.getenv("DB_NAME"), os.getenv("DB_USER"))
 
 from datetime import datetime  

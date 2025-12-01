@@ -2,11 +2,17 @@ import pandas as pd
 import psycopg2
 import os
 from dotenv import load_dotenv
+from pathlib import Path
+
 
 # Charger les variables .env
 # load_dotenv()
-# Charger les variables depuis ~/.cryptobot_env
-load_dotenv(dotenv_path=os.path.expanduser("~/.cryptobot_env"))
+# Charger les variables d'environnement depuis le fichier .env a la racine du serveur
+# load_dotenv(dotenv_path=os.path.expanduser("~/.cryptobot_env"))
+
+
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
 print("Connexion à la base :", os.getenv("DB_NAME"), os.getenv("DB_USER"))
 
 def get_connection():
