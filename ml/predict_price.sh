@@ -24,15 +24,15 @@ if [ $? -ne 0 ]; then
 fi
 
 # Étape 2 - Dashboard
-cd dashboard || exit 1
-echo -e "\n▶️ Lancement du dashboard Streamlit..."
-streamlit run dashboard.py
-if [ $? -ne 0 ]; then
-    echo "❌ Erreur lors de l'exécution de dashboard.py."
-    exit 1
-fi
+# cd dashboard || exit 1
+# echo -e "\n▶️ Lancement du dashboard Streamlit..."
+# streamlit run dashboard.py
+# if [ $? -ne 0 ]; then
+#     echo "❌ Erreur lors de l'exécution de dashboard.py."
+#     exit 1
+# fi
 
-echo -e "\n✅ Script terminé avec succès !"
+echo -e "\n✅ SPrédiction ML terminée."
 
 # Attente de 60 secondes avant de se fermer
 sleep 60
