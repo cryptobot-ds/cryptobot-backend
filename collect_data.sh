@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 # Obtenir le répertoire du script et changer vers ce répertoire
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")

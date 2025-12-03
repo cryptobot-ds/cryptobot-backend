@@ -148,3 +148,10 @@ DB_PORT=5432 # port par défaut en local
 ```
 
 Exécuter les scripts.
+
+
+voir les logs du cron 
+cd /home/ubuntu/actions-runner/_work/cryptobot-backend/cryptobot-backend
+./collect_data.sh 
+Puis :
+tail -n 50 logs/collect_data_cron.log

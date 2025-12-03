@@ -3,7 +3,7 @@ cd /d D:\Dev_web\dataScientest\cryptobot-backend
 call .venv\Scripts\activate
 
 :: Étape 1 - Prédiction
-python predict_price.py
+python ml\predict_price.py
 IF %ERRORLEVEL% NEQ 0 (
     echo ❌ Erreur lors de la prédiction.
     pause
@@ -11,6 +11,7 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 :: Étape 2 - Dashboard
+cd ..
 cd dashboard
 streamlit run dashboard.py
 IF %ERRORLEVEL% NEQ 0 (

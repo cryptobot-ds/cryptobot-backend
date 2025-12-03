@@ -19,13 +19,38 @@ from sklearn.metrics import mean_absolute_error
 load_dotenv()
 
 # Logging
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# LOG_FILE = os.path.join(BASE_DIR, 'logs', 'bot.log')
+# logging.basicConfig(
+#     filename=LOG_FILE,
+#     level=logging.INFO,
+#     format='%(asctime)s - %(levelname)s - %(message)s'
+# )
+
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(BASE_DIR, 'logs', 'bot.log')
+ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, os.pardir))
+
+env_path = os.path.join(ROOT_DIR, ".env")
+if os.path.exists(env_path):
+    load_dotenv(env_path)
+
+home_env = os.path.expanduser("~/.cryptobot_env")
+if os.path.exists(home_env):
+    load_dotenv(home_env, override=True)
+
+
+LOG_DIR = os.path.join(ROOT_DIR, "logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = os.path.join(LOG_DIR, "ml_predict.log")
+
 logging.basicConfig(
     filename=LOG_FILE,
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(levelname)s - %(message)s"
 )
+
+
 
 # Cryptos et features
 cryptos = {"bitcoin":"btc", "ethereum":"eth", "binancecoin":"bnb"}
@@ -142,7 +167,7 @@ def predict_price(name, code):
         insert_prediction(name, pred_next, last_price, decision, mae_test)
 
     except Exception as e:
-        logging.error(f"Erreur {name}: {e}")
+        logging.error(f"Erreur {name}: {e}", exc_info=True)
         print("❌ Erreur:", e)
 
 def insert_prediction(crypto, pred, last, decision, mae, version="v2"):

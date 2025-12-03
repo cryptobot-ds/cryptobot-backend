@@ -8,7 +8,12 @@ cd "$SCRIPT_DIR" || {
 }
 
 # Activer l'environnement virtuel
-source .venv/bin/activate
+if [ -f ".venv/bin/activate" ]; then
+    source .venv/bin/activate
+else
+    echo "❌ Erreur : .venv introuvable à la racine du projet."
+    exit 1
+fi
 
 # Étape 1 - Prédiction
 echo -e "\n▶️ Lancement de la prédiction..."
