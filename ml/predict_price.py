@@ -5,6 +5,9 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import psycopg2
+import mlflow
+import mlflow.sklearn
+
 from dotenv import load_dotenv
 
 from sklearn.impute import SimpleImputer
@@ -50,6 +53,10 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+# MLflow setup
+MLFLOW_URI = "file:" + os.path.join(ROOT_DIR, "mlruns")
+mlflow.set_tracking_uri(MLFLOW_URI)
+mlflow.set_experiment("cryptobot_ridge")
 
 
 # Cryptos et features
@@ -156,7 +163,28 @@ def predict_price(name, code):
         last_price = float(df["price"].iloc[-1])
         decision = decide_action(last_price, pred_next)
 
-        # 10) log & insert
+        # 10) log MLflow
+        run_name = f"{name}_{code}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        with mlflow.start_run(run_name=run_name):
+            mlflow.log_param("crypto_name", name)
+            mlflow.log_param("crypto_code", code)
+            mlflow.log_param("model", "Ridge")
+            mlflow.log_param("alpha", 1.0)
+            mlflow.log_param("n_features", len(feats))
+
+            mlflow.log_text("\n".join(feats), artifact_file="features_used.txt")
+
+            mlflow.log_metric("mae_cv_mean", float(scores.mean()))
+            mlflow.log_metric("mae_cv_std", float(scores.std()))
+            mlflow.log_metric("mae_test", float(mae_test))
+            mlflow.log_metric("directional_accuracy", float(dir_acc))
+            mlflow.log_metric("last_price", float(last_price))
+            mlflow.log_metric("pred_next", float(pred_next))
+
+            mlflow.sklearn.log_model(pipe, artifact_path="model")
+            #end mlflow run
+
+        # 11) log & insert
         msg = (
             f"{name.upper()} → Prédiction: {pred_next:.2f} USD, "
             f"MAE_test: {mae_test:.2f}, DirAcc: {dir_acc:.2%}, "
@@ -190,4 +218,5 @@ if __name__ == "__main__":
     print("Heure actuelle :", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     for n, c in cryptos.items():
         predict_price(n, c)
+
 

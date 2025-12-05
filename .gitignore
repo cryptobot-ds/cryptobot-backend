@@ -177,3 +177,32 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# -------------------------
+# MLflow - machine-learning
+# -------------------------
+# Répertoire des runs MLflow
+mlruns/
+mlartifacts/
+
+# -------------------------
+# Terraform - infra/infra-as-code
+# -------------------------
+
+# Répertoire interne Terraform
+infra/infra-as-code/.terraform/
+
+# Lock file Terraform
+infra/infra-as-code/.terraform.lock.hcl
+
+# Fichiers de state
+infra/infra-as-code/*.tfstate
+infra/infra-as-code/*.tfstate.*
+
+# Variables privées
+infra/infra-as-code/terraform.tfvars
+infra/infra-as-code/*.auto.tfvars
+
+# Crash logs
+infra/infra-as-code/crash.log
+infra/infra-as-code/crash.*

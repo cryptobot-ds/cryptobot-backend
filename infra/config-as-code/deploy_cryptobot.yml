@@ -1,0 +1,81 @@
+---
+- name: Déployer CryptoBot sur l'instance EC2
+  hosts: localhost
+  connection: local
+  become: yes
+
+  vars:
+    #  URL de ton dépôt Git
+    cryptobot_repo_url: "https://github.com/cryptobot-ds/cryptobot-backend.git"
+
+    #  Dossier d'installation sur l'EC2
+    cryptobot_dest_dir: "/home/ubuntu/cryptobot-backend"
+    cryptobot_user: "ubuntu"
+
+    #  Fichier d'environnement global (utilisé par collect_data.sh)
+    cryptobot_env_path: "/home/ubuntu/.cryptobot_env"
+
+    #  Variables de connexion à la base RDS (à adapter)
+    db_host: "ENDPOINT_RDS"
+    db_name: "cryptobot"
+    db_user: "cryptobot_user"
+    db_password: "CHANGE_ME"
+    db_port: "5432"
+
+  tasks:
+    - name: Installer les paquets système nécessaires (git, python, venv, pip)
+      apt:
+        name:
+          - git
+          - python3
+          - python3-venv
+          - python3-pip
+        state: present
+        update_cache: yes
+
+    - name: Cloner ou mettre à jour le dépôt CryptoBot
+      become: yes
+      become_user: "{{ cryptobot_user }}"
+      git:
+        repo: "{{ cryptobot_repo_url }}"
+        dest: "{{ cryptobot_dest_dir }}"
+        version: main
+        force: yes
+
+    - name: S'assurer que le dossier logs existe
+      file:
+        path: "{{ cryptobot_dest_dir }}/logs"
+        state: directory
+        mode: "0755"
+        owner: "{{ cryptobot_user }}"
+        group: "{{ cryptobot_user }}"
+
+    - name: Rendre collect_data.sh exécutable
+      file:
+        path: "{{ cryptobot_dest_dir }}/collect_data.sh"
+        state: file
+        mode: "0755"
+        owner: "{{ cryptobot_user }}"
+        group: "{{ cryptobot_user }}"
+
+    - name: Créer le fichier d'environnement global ~/.cryptobot_env
+      become: yes
+      become_user: "{{ cryptobot_user }}"
+      copy:
+        dest: "{{ cryptobot_env_path }}"
+        mode: "0600"
+        content: |
+          DB_HOST={{ db_host }}
+          DB_NAME={{ db_name }}
+          DB_USER={{ db_user }}
+          DB_PASSWORD={{ db_password }}
+          DB_PORT={{ db_port }}
+
+    - name: Créer la tâche CRON pour lancer collect_data.sh toutes les heures à H:10
+      become: yes
+      become_user: "{{ cryptobot_user }}"
+      cron:
+        name: "CryptoBot – pipeline de collecte horaire"
+        minute: "10"
+        hour: "*"
+        job: "cd {{ cryptobot_dest_dir }} && ./collect_data.sh >> {{ cryptobot_dest_dir }}/logs/collect_data_cron.log 2>&1"

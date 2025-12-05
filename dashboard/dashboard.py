@@ -80,6 +80,8 @@ crypto = st.selectbox("Sélectionne une crypto :", ["bitcoin", "ethereum", "bina
 prediction = load_prediction(crypto)
 
 st.subheader(f" Prédiction du prix pour demain ({crypto.capitalize()})")
+# date de la prédiction :
+st.caption(f"Date de la prédiction : {prediction['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}" if prediction is not None else "Aucune prédiction disponible.")
 
 if prediction is not None:
     st.metric(label=f"Prix actuel ({crypto.upper()})", value=f"${prediction['last_price']:,.2f}")

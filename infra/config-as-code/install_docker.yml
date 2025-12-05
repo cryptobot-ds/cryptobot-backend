@@ -1,0 +1,46 @@
+---
+- name: Installer Docker sur l'instance CryptoBot
+  hosts: localhost
+  become: yes
+  connection: local
+
+  tasks:
+    - name: Mettre à jour la liste des paquets
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Installer les paquets nécessaires
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Installer Docker via apt (docker.io seulement)
+      apt:
+        name:
+          - docker.io
+        state: present
+
+    - name: Ajouter l'utilisateur ubuntu au groupe docker
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Activer et démarrer le service Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Vérifier la version de Docker
+      command: docker --version
+      register: docker_version
+
+    - name: Afficher la version de Docker
+      debug:
+        var: docker_version.stdout
