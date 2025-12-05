@@ -15,11 +15,6 @@ jobs:
       - name: Checkout du code
         uses: actions/checkout@v4
       
-      - name: sudo chown -R ubuntu:ubuntu mlruns
-        run: |
-          cd /home/ubuntu/actions-runner/_work/cryptobot-backend/cryptobot-backend
-          sudo chown -R ubuntu:ubuntu mlruns
-
       - name: Créer l'environnement virtuel et installer les dépendances
         run: |
           python3 -m venv .venv
