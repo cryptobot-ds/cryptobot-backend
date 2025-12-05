@@ -54,7 +54,7 @@ logging.basicConfig(
 )
 
 # MLflow setup
-MLFLOW_URI = "file:" + os.path.join(ROOT_DIR, "mlruns")
+MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", "file:" + os.path.join(ROOT_DIR, "mlruns"))
 mlflow.set_tracking_uri(MLFLOW_URI)
 mlflow.set_experiment("cryptobot_ridge")
 
