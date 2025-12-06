@@ -80,15 +80,13 @@ crypto = st.selectbox("Sélectionne une crypto :", ["bitcoin", "ethereum", "bina
 prediction = load_prediction(crypto)
 
 st.subheader(f" Prédiction du prix pour demain ({crypto.capitalize()})")
-# date de la prédiction :
-st.caption("blabla")
-st.caption(f"Date de la prédiction : {prediction['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}" if prediction is not None else "Aucune prédiction disponible.")
 
 
 if prediction is not None:
     st.metric(label=f"Prix actuel ({crypto.upper()})", value=f"${prediction['last_price']:,.2f}")
     st.metric(label=f"Prédiction pour demain ({crypto.upper()})", value=f"${prediction['predicted_price']:,.2f}")
     st.caption(f"Erreur moyenne du modèle (MAE) : ±${prediction['model_mae']:,.2f}")
+    st.caption(f"Date de la prédiction : {prediction['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}")
     # Affichage de la décision (BUY, SELL, HOLD)
     decision = prediction['decision']
     # 🎨 Petit encart coloré avec emoji
