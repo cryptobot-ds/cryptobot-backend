@@ -36,8 +36,13 @@ services:
       - MLFLOW_TRACKING_URI=file:/mlruns
       - MLFLOW_UI_ALLOWED_HOSTS=3.252.142.131,localhost,127.0.0.1
     command: >
-      sh -c "pip install --no-cache-dir mlflow &&
-             mlflow ui --backend-store-uri file:/mlruns --host 0.0.0.0 --port 5000"
+        sh -c "pip install --no-cache-dir mlflow &&
+            mlflow ui
+              --backend-store-uri file:/mlruns
+              --host 0.0.0.0
+              --port 5000
+              --allowed-hosts '*' 
+              --cors-allowed-origins '*'"
     ports:
       - "5000:5000"
     networks:
