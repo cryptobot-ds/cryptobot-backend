@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env
+      - /home/ubuntu/cryptobot_env/.env
     networks:
       - cryptobot_net
 
@@ -20,7 +20,7 @@ services:
     ports:
       - "8501:8501"
     env_file:
-      - .env
+      - /home/ubuntu/cryptobot_env/.env
     depends_on:
       - api
     networks:
