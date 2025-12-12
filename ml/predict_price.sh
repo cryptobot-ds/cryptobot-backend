@@ -1,9 +1,15 @@
 #!/bin/bash
+set -e
 
-# Obtenir le répertoire du script et changer vers ce répertoire
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-cd "$SCRIPT_DIR" || {
-    echo "❌ Erreur : Impossible de changer vers le répertoire du script."
+# Dossier du script
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+
+# Racine du projet (= parent de ml)
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Se placer à la racine
+cd "$PROJECT_ROOT" || {
+    echo "❌ Erreur : Impossible d'accéder à la racine du projet."
     exit 1
 }
 

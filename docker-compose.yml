@@ -55,8 +55,10 @@ services:
     container_name: cryptobot_node_exporter
     command:
       - --path.rootfs=/host
+      - --collector.textfile.directory=/host/var/lib/node_exporter/textfile_collector
     volumes:
       - /:/host:ro,rslave
+      - /var/lib/node_exporter/textfile_collector:/host/var/lib/node_exporter/textfile_collector
     networks:
       - cryptobot_net
     restart: unless-stopped
