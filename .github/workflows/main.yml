@@ -26,6 +26,7 @@ jobs:
 
       - name: Lancer le script de collecte
         run: |
+          chmod 775 collect_data/collect_data.sh
           .venv/bin/python collect_data/bot.py
 
       - name: Lancer le script de features
