@@ -64,6 +64,12 @@ if [ -f "bdd/check_db.py" ]; then
   python3 bdd/check_db.py
 fi
 
+
+echo "▶️ Lancement predict_price"
+python3 ml/predict_price.py
+
+echo "✅ Prédiction terminée"
+
 # si tout est OK
 write_success
 echo "✅ Script CRON terminé"
