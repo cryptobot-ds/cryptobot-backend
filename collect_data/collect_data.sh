@@ -27,12 +27,8 @@ trap 'echo "❌ CRON error (line $LINENO)"; write_failure' ERR
 
 # --- se placer dans le dossier du script ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-cd "$PROJECT_ROOT" || {
-  echo "❌ Erreur : Impossible d'accéder à la racine du projet."
-  write_failure
-  exit 1
-}
+cd "$SCRIPT_DIR"
+
 
 # --- charger env RDS ---
 if [ -f "$HOME/.cryptobot_env" ]; then
@@ -65,13 +61,13 @@ echo "📊 Génération features"
 python3 generate_features.py
 
 echo "🗄️ Vérification DB"
-if [ -f "bdd/check_db.py" ]; then
-  python3 bdd/check_db.py
+if [ -f "../bdd/check_db.py" ]; then
+  python3 ../bdd/check_db.py
 fi
 
 
 echo "▶️ Lancement predict_price"
-python3 ml/predict_price.py
+python3 ../ml/predict_price.py
 echo "✅ Prédiction terminée"
 
 # si tout est OK
