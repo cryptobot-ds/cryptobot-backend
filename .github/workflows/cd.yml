@@ -27,9 +27,11 @@ jobs:
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Deploy (pull + up)
+        working-directory: /home/ubuntu/actions-runner/_work/cryptobot-backend/cryptobot-backend
         run: |
-          docker compose -f docker-compose.prod.yml pull
-          docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            ls -la
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
 
       - name: Cleanup old images
         run: |

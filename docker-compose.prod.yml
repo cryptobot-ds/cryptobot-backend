@@ -1,6 +1,8 @@
 services:
   api:
     image: bricesensei/cryptobot-api:latest
+    mem_limit: 350m
+    cpus: "0.50"
     container_name: cryptobot_api
     ports:
       - "8000:8000"
@@ -12,6 +14,8 @@ services:
 
   dashboard:
     image: bricesensei/cryptobot-dashboard:latest
+    mem_limit: 350m
+    cpus: "0.50"
     container_name: cryptobot_dashboard
     ports:
       - "8501:8501"
@@ -43,6 +47,8 @@ services:
 
   node-exporter:
     image: prom/node-exporter:latest
+    mem_limit: 80m
+    cpus: "0.10"
     container_name: cryptobot_node_exporter
     command:
       - --path.rootfs=/host
@@ -56,6 +62,8 @@ services:
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
+    mem_limit: 150m
+    cpus: "0.20"
     container_name: cryptobot_cadvisor
     volumes:
       - /:/rootfs:ro
@@ -68,6 +76,8 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
+    mem_limit: 300m
+    cpus: "0.30"
     container_name: cryptobot_prometheus
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
@@ -83,6 +93,8 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    mem_limit: 300m
+    cpus: "0.30"
     container_name: cryptobot_grafana
     ports:
       - "3000:3000"
