@@ -1,0 +1,43 @@
+name: CI - Build & Push Docker images
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # --- API image ---
+      - name: Build & Push API
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: api/Dockerfile
+          push: true
+          tags: |
+            bricesensei/cryptobot-api:latest
+            bricesensei/cryptobot-api:${{ github.sha }}
+
+      # --- Dashboard image ---
+      - name: Build & Push Dashboard
+        uses: docker/build-push-action@v6
+        with:
+          context: ./dashboard
+          push: true
+          tags: |
+            bricesensei/cryptobot-dashboard:latest
+            bricesensei/cryptobot-dashboard:${{ github.sha }}

@@ -1,0 +1,36 @@
+name: CD - Deploy on EC2 (self-hosted)
+
+on:
+  workflow_run:
+    workflows: ["CI - Build & Push Docker images"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          clean: false
+
+      - name: Docker info
+        run: |
+          docker --version
+          docker compose version
+
+      - name: Docker login (Docker Hub)
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Deploy (pull + up)
+        run: |
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
+      - name: Cleanup old images
+        run: |
+          docker image prune -af --filter "until=168h"

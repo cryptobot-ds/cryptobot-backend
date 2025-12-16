@@ -1,4 +1,4 @@
-name: Lancer le script de déploiement
+name: Tests - Python sanity checks
 
 on:
   push:
