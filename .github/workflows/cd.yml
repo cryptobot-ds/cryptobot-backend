@@ -26,6 +26,14 @@ jobs:
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
+      - name: Pre-cleanup (free disk before pull)
+        run: |
+            df -h
+            docker system df
+            docker image prune -af
+            docker builder prune -af || true
+
+
       - name: Deploy (pull + up)
         working-directory: /home/ubuntu/actions-runner/_work/cryptobot-backend/cryptobot-backend
         run: |
@@ -36,3 +44,16 @@ jobs:
       - name: Cleanup old images
         run: |
           docker image prune -af --filter "until=168h"
+
+      - name: Post-cleanup
+        run: |
+          docker system prune -af
+          docker system df
+          df -h
+          
+      - name: Cleanup runner workspace
+        run: |
+          du -sh /home/ubuntu/actions-runner/_work || true
+          find /home/ubuntu/actions-runner/_work -maxdepth 2 -type d -name "_temp" -o -name "_tool" | head -n 50
+
+
