@@ -30,6 +30,8 @@ services:
   mlflow:
     image: python:3.12-slim
     container_name: cryptobot_mlflow
+    mem_limit: 250m
+    cpus: "0.30"
     working_dir: /app
     volumes:
       - /home/ubuntu/mlflow_data/mlruns:/mlruns
