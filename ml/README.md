@@ -23,9 +23,13 @@ Ce module constitue la partie **Machine Learning** du projet `cryptobot-backend`
 
 ml/
 ├── init.py # Rend le dossier importable comme package Python
+
 ├── predict_price.py # Script principal de prédiction et insertion BDD
+
 ├── train_model.py # (À venir) Entraînement et sauvegarde du modèle
+
 ├── features_engineering.py # (À venir) Préparation et sélection des features
+
 ├── Dockerfile # Dockerfile spécifique au module ML
 
 
