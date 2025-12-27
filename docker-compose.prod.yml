@@ -28,19 +28,18 @@ services:
     restart: unless-stopped
 
   mlflow:
-    image: python:3.12-slim
+    image: ghcr.io/mlflow/mlflow:latest
     container_name: cryptobot_mlflow
-    mem_limit: 250m
-    cpus: "0.30"
-    working_dir: /app
+    mem_limit: 350m
+    cpus: "0.50"
     volumes:
       - /home/ubuntu/mlflow_data/mlruns:/mlruns
-    environment:
-      - MLFLOW_TRACKING_URI=file:/mlruns
     command: >
-      sh -c "pip install --no-cache-dir mlflow &&
-             mlflow ui --backend-store-uri file:/mlruns --host 0.0.0.0 --port 5000
-             --allowed-hosts '*' --cors-allowed-origins '*'"
+      mlflow server
+      --backend-store-uri file:/mlruns
+      --default-artifact-root file:/mlruns
+      --host 0.0.0.0
+      --port 5000
     ports:
       - "5000:5000"
     networks:
