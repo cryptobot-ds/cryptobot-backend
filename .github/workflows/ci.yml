@@ -26,8 +26,10 @@ jobs:
           pip install pytest
 
       - name: Run unit tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: |
-          pytest -q
+          python -m pytest -q
 
       # ✅ Build et push des images Docker
       - name: Login to Docker Hub
