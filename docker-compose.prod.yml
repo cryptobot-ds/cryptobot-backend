@@ -1,7 +1,7 @@
 services:
   api:
     image: bricesensei/cryptobot-api:latest
-    mem_limit: 350m
+    mem_limit: 300m
     cpus: "0.50"
     container_name: cryptobot_api
     ports:
@@ -14,7 +14,7 @@ services:
 
   dashboard:
     image: bricesensei/cryptobot-dashboard:latest
-    mem_limit: 350m
+    mem_limit: 250m
     cpus: "0.50"
     container_name: cryptobot_dashboard
     ports:
@@ -30,7 +30,7 @@ services:
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
     container_name: cryptobot_mlflow
-    mem_limit: 350m
+    mem_limit: 600m
     cpus: "0.50"
     volumes:
       - /home/ubuntu/mlflow_data/mlruns:/mlruns
@@ -64,7 +64,7 @@ services:
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
-    mem_limit: 150m
+    mem_limit: 250m
     cpus: "0.20"
     container_name: cryptobot_cadvisor
     volumes:
@@ -78,7 +78,7 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    mem_limit: 300m
+    mem_limit: 200m
     cpus: "0.30"
     container_name: cryptobot_prometheus
     volumes:
@@ -95,7 +95,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    mem_limit: 300m
+    mem_limit: 200m
     cpus: "0.30"
     container_name: cryptobot_grafana
     ports:
