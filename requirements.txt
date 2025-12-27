@@ -54,3 +54,4 @@ tzdata==2025.1
 urllib3==2.3.0
 uvicorn==0.34.2
 mlflow>=2.0.0
+pytest==8.3.4

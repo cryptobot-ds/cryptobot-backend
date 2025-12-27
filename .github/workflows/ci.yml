@@ -12,6 +12,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ✅ Tests unitaires
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run unit tests
+        run: |
+          pytest -q
+
+      # ✅ Build et push des images Docker
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -21,7 +39,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # --- API image ---
       - name: Build & Push API
         uses: docker/build-push-action@v6
         with:
@@ -32,7 +49,6 @@ jobs:
             bricesensei/cryptobot-api:latest
             bricesensei/cryptobot-api:${{ github.sha }}
 
-      # --- Dashboard image ---
       - name: Build & Push Dashboard
         uses: docker/build-push-action@v6
         with:
