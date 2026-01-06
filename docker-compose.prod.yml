@@ -30,14 +30,15 @@ services:
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
     container_name: cryptobot_mlflow
-    mem_limit: 600m
+    mem_limit: 500m
     cpus: "0.50"
     volumes:
-      - /home/ubuntu/mlflow_data/mlruns:/mlruns
+      - /home/ubuntu/mlflow_data/db:/mlflow/db
+      - /home/ubuntu/mlflow_data/artifacts:/mlflow/artifacts
     command: >
       mlflow server
-      --backend-store-uri file:/mlruns
-      --default-artifact-root file:/mlruns
+      --backend-store-uri sqlite:////mlflow/db/mlflow.db
+      --artifacts-destination /mlflow/artifacts
       --host 0.0.0.0
       --port 5000
       --allowed-hosts '*'
